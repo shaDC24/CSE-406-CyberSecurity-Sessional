@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# C/C++ compiled files
+*.o
+*.out
+a.out
+
+# Debugger
+.gdb_history
+peda-session-*
+
+# macOS
+.DS_Store
+
+# Archives / backups
+*.zip
+
+# Temporary files
+*.tmp
+*.temp
+
+# Generated files
+*.log
+*.mkv
+offline-2/sca_offline/sca_online/server_linux
+Online-1-buffer-overflow/buffer_overflow_session.mkv
+
+

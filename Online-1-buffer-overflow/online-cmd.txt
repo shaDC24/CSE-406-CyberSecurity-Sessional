@@ -1,0 +1,41 @@
+az vm start --resource-group seed-rg --name seed-vm
+az vm show --resource-group seed-rg --name seed-vm --show-details --query publicIps -o tsv
+scp -i C:\Users\A\.ssh\id_rsa -r "D:\Level-4Term-1\CSE406-Cybersecurity_Sessional\Online-1-buffer-overflow\BufferOverflowSession\BufferOverflowSession" seed@20.205.97.7:/home/seed/
+ssh -i C:\Users\A\.ssh\id_rsa -L 5901:localhost:5901 seed@20.205.97.7
+
+sudo sysctl -w kernel.randomize_va_space=0
+sudo ln -sf /bin/zsh /bin/sh
+gcc -m32 -o target_dbg -g -z exectarget -fno-stack-protector main.c
+sudo chown root target_dbg
+sudo chmod 4755 target_dbg
+
+rm -rf * .[^.]*
+cp -r Ret2Win/. shatabdi/
+
+
+
+
+
+injection
+ssh -i C:\Users\A\.ssh\id_rsa -L 5901:localhost:5901 seed@20.205.97.7
+
+cd practice/shatabdi
+rm -rf * .[^.]*
+cd ..
+cp -r Inject2Win/. shatabdi/
+cd shatabdi
+aro kaj.....
+sudo sysctl -w kernel.randomize_va_space=0
+gcc -m32 -fno-stack-protector -no-pie -z execstack -o target_dbg -g target.c
+cd .
+gdb `pwd`/target_dbg
+unset environment LINES
+unset environment COLUMNS
+set exec-wrapper env -i
+b foo
+run
+n
+cd .
+env -i `pwd`/target_dbg
+sudo chown root target_dbg
+sudo chmod 4755 target_dbg
